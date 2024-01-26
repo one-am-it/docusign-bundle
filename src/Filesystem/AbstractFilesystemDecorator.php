@@ -52,7 +52,7 @@ abstract class AbstractFilesystemDecorator implements FilesystemInterface
     /**
      * {@inheritdoc}
      */
-    public function has($path)
+    public function has($path): bool
     {
         return $this->decorated->has($path);
     }

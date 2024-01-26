@@ -15,11 +15,13 @@ namespace DocusignBundle\Filesystem;
 
 use League\Flysystem\DirectoryListing;
 use League\Flysystem\FilesystemInterface;
+use League\Flysystem\FilesystemOperator;
 
 /*
  * flysystem compatibility.
  */
 if (interface_exists(FilesystemInterface::class)) {
+    // Flysystem 1
     class FilesystemDecorator extends AbstractFilesystemDecorator
     {
         /**
@@ -70,7 +72,8 @@ if (interface_exists(FilesystemInterface::class)) {
             $this->decorated->setVisibility($path, $visibility);
         }
     }
-} else {
+} elseif (!method_exists(FilesystemOperator::class, 'directoryExists')) {
+    // Flysystem 2
     class FilesystemDecorator extends AbstractFilesystemDecorator
     {
         /**
@@ -119,6 +122,66 @@ if (interface_exists(FilesystemInterface::class)) {
         public function setVisibility(string $path, string $visibility): void
         {
             $this->decorated->setVisibility($path, $visibility);
+        }
+    }
+} else {
+    // Flysystem 3
+    class FilesystemDecorator extends AbstractFilesystemDecorator
+    {
+        /**
+         * {@inheritdoc}
+         */
+        public function listContents(string $location, bool $deep = self::LIST_SHALLOW): DirectoryListing
+        {
+            return $this->decorated->listContents($location, $deep);
+        }
+
+        /**
+         * {@inheritdoc}
+         */
+        public function write(string $location, string $contents, array $config = []): void
+        {
+            $this->decorated->write($location, $contents, $config);
+        }
+
+        /**
+         * {@inheritdoc}
+         */
+        public function writeStream(string $location, $contents, array $config = []): void
+        {
+            $this->decorated->writeStream($location, $config, $config);
+        }
+
+        /**
+         * {@inheritdoc}
+         */
+        public function copy(string $source, string $destination, array $config = []): void
+        {
+            $this->decorated->copy($source, $destination, $config);
+        }
+
+        /**
+         * {@inheritdoc}
+         */
+        public function delete(string $location): void
+        {
+            $this->decorated->delete($location);
+        }
+
+        /**
+         * {@inheritdoc}
+         */
+        public function setVisibility(string $path, string $visibility): void
+        {
+            $this->decorated->setVisibility($path, $visibility);
+        }
+
+        /**
+         * {@inheritdoc}
+         */
+        public function directoryExists(string $location): bool
+        {
+            return $this->decorated->directoryExists($location);
         }
     }
 }

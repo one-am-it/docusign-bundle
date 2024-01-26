@@ -90,7 +90,8 @@
         ]
     },
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "prepend-autoloader": false
     },
     "minimum-stability": "stable"
 }
