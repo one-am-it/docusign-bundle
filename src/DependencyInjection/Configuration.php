@@ -120,7 +120,7 @@ final class Configuration implements ConfigurationInterface
                         ->info('Position the signatures on a page, X and Y axis of your documents')
                         ->beforeNormalization()
                             ->ifTrue(static function ($v) { return isset($v[0]); })
-                            ->then(static function ($v) { return ['default' => [$v[0]]]; })
+                            ->then(static function ($v) { return ['default' => $v]; })
                         ->end()
                         ->useAttributeAsKey('document_name')
                         ->arrayPrototype()
